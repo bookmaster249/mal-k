@@ -1,14 +1,14 @@
 local player = game.Players.LocalPlayer
 local RunService = game:GetService("RunService")
 
--- GUI
+-- GUI OLUŞTUR
 local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-gui.Name = "AutoTapCardGui"
+gui.Name = "AutoTapCardGUI"
 
--- Kart görünümü
+-- KART GÖRÜNÜMÜ
 local card = Instance.new("TextButton")
 card.Size = UDim2.new(0, 200, 0, 100)
-card.Position = UDim2.new(0, 20, 0, 300)
+card.Position = UDim2.new(0, 30, 0, 300)
 card.Text = "AUTO TAP: OFF"
 card.TextSize = 20
 card.Font = Enum.Font.GothamBold
@@ -17,11 +17,18 @@ card.BackgroundColor3 = Color3.fromRGB(255, 60, 60) -- Kırmızı (kapalı)
 card.BorderSizePixel = 0
 card.Parent = gui
 
--- Ayar
+-- AYARLAR
 local autoTap = false
-local delay = 0.1 -- tıklama hızı
+local tapSpeed = 0.1
 
--- Görünümü güncelle
+-- BUTON YERİ (OYUNDAKİ BUTONUN YOLU)
+-- Burayı kendi GUI yapına göre düzenle!
+local targetButton
+pcall(function()
+	targetButton = player.PlayerGui:WaitForChild("PhantomBallGui"):WaitForChild("BlockY")
+end)
+
+-- GÖRÜNÜM GÜNCELLE
 local function updateCard()
 	if autoTap then
 		card.Text = "AUTO TAP: ON"
@@ -31,22 +38,22 @@ local function updateCard()
 		card.BackgroundColor3 = Color3.fromRGB(255, 60, 60) -- Kırmızı
 	end
 end
+updateCard()
 
--- Kart tıklandığında aktif/pasif geçiş
+-- TIKLANINCA DURUM DEĞİŞTİR
 card.MouseButton1Click:Connect(function()
 	autoTap = not autoTap
 	updateCard()
 end)
 
--- Auto tap döngüsü
+-- OTOMATİK TIKLAMA DÖNGÜSÜ
 task.spawn(function()
 	while true do
-		if autoTap then
-			mouse1click()
+		if autoTap and targetButton then
+			pcall(function()
+				targetButton:Activate() -- Gerçek butona tıklama
+			end)
 		end
-		task.wait(delay)
+		task.wait(tapSpeed)
 	end
 end)
-
--- Başlangıç görünümü ayarla
-updateCard()
