@@ -1,0 +1,10 @@
+local module = {}
+
+function module.Start(clickEvent, power)
+	while true do
+		clickEvent:FireServer(power)
+		task.wait(1/power)
+	end
+end
+
+return module
